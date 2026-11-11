@@ -20,10 +20,19 @@ void ModemService::powerOn() {
     debugPrintln("Modem einschalten...");
     pinMode(MODEM_DTR_PIN, OUTPUT); digitalWrite(MODEM_DTR_PIN, LOW);
     pinMode(BOARD_PWRKEY_PIN, OUTPUT); digitalWrite(BOARD_PWRKEY_PIN, LOW);
-    delay(100); digitalWrite(BOARD_PWRKEY_PIN, HIGH);
-    delay(MODEM_POWERON_PULSE_WIDTH_MS); digitalWrite(BOARD_PWRKEY_PIN, LOW);
-    delay(10000);
-    while (!modem.testAT()) { debugPrint("."); delay(500); }
+    // PWRKEY schaltet um (an <-> aus): Läuft das Modem noch (z.B. nach Reset/Flashen des ESP32),
+    // würde ein Puls es ausschalten. Daher nur pulsen, wenn es nicht antwortet,
+    // und nach ~30 s ohne Antwort erneut pulsen statt endlos zu warten.
+    int retry = 0;
+    while (!modem.testAT(1000)) {
+        if (retry++ % 30 == 0) {
+            debugPrintln("PWRKEY-Puls");
+            digitalWrite(BOARD_PWRKEY_PIN, HIGH);
+            delay(MODEM_POWERON_PULSE_WIDTH_MS);
+            digitalWrite(BOARD_PWRKEY_PIN, LOW);
+        }
+        debugPrint(".");
+    }
     debugPrintln("Modem online.");
     delay(5000);
     configureModemSettings();
@@ -45,16 +54,21 @@ void ModemService::powerOff() {
     while (modem.testAT()) {
         debugPrint("."); delay(500);
     }
-    debugPrintln("Modem is not response, power off success!");
+    debugPrintln("Modem is not responsive, power off success!");
     delay(5000);
 }
 
 bool ModemService::connectGPRS() {
     debugPrintln("Verbinde GPRS...");
-    if (!modem.waitForNetwork()){
+    if (!modem.waitForNetwork(NETWORK_TIMEOUT_MS)){
         #ifdef DEBUG_MODE_AKTIV
             debugBLEln("Network connection failed");
             debugPrintln("Network connection failed");
+            // Diagnose: 99 = kein Empfang (Antenne/Abdeckung), Status 2 = sucht, 3 = abgelehnt
+            String diag = "Signal quality: " + String(modem.getSignalQuality()) +
+                          ", Reg-Status: " + String(modem.getRegistrationStatus());
+            debugBLEln(diag.c_str());
+            debugPrintln(diag.c_str());
         #endif
         return false;
     }
@@ -130,7 +144,7 @@ bool ModemService::publishData(int distance_mm, int temperature_dC) {
 
 void ModemService::configureModemSettings() {
     modem.sendAT("+CFUN=0"); modem.waitResponse(10000L);
-    modem.setNetworkMode(2); modem.setPreferredMode(3);
+    modem.setNetworkMode(MODEM_NETWORK_MODE); modem.setPreferredMode(3);
     modem.sendAT("+CFUN=1"); modem.waitResponse(10000L);
 }
 
