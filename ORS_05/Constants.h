@@ -44,6 +44,9 @@
 const char GPRS_USER[]      = "";
 const char GPRS_PASS[]      = "";
 const uint32_t NETWORK_TIMEOUT_MS = 180000; // erstes Einbuchen (v.a. NB-IoT/LTE-M) kann länger dauern
+// Netzmodus: 2 = Automatik (LTE-M/NB-IoT + 2G), 13 = nur 2G (GSM), 38 = nur LTE-M/NB-IoT
+// 2G verbindet sich zuverlässig und schnell; in Automatik sucht das Modem oft minutenlang LTE-Bänder ab
+#define MODEM_NETWORK_MODE        (13)
 
 extern const char* MQTT_BROKER;
 extern const int   MQTT_PORT;

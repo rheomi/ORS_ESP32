@@ -135,7 +135,7 @@ bool ModemService::publishData(int distance_mm, int temperature_dC) {
 
 void ModemService::configureModemSettings() {
     modem.sendAT("+CFUN=0"); modem.waitResponse(10000L);
-    modem.setNetworkMode(2); modem.setPreferredMode(3);
+    modem.setNetworkMode(MODEM_NETWORK_MODE); modem.setPreferredMode(3);
     modem.sendAT("+CFUN=1"); modem.waitResponse(10000L);
 }
 
