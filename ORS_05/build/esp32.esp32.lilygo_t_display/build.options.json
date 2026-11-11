@@ -1,0 +1,10 @@
+{
+  "additionalFiles": "../..,../..,../..,../..,../..,../..,../..,../..,../..",
+  "builtInLibrariesFolders": "/Users/christophrendel_privat/Library/Arduino15/libraries",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "",
+  "fqbn": "esp32:esp32:lilygo_t_display:UploadSpeed=115200,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=default,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none",
+  "hardwareFolders": "/Users/christophrendel_privat/Library/Arduino15/packages/esp32/hardware/esp32/3.3.12,/Users/christophrendel_privat/Library/Arduino15/packages/esp32/hardware/esp32/3.3.12",
+  "otherLibrariesFolders": "/Users/christophrendel_privat/Documents/Arduino/libraries",
+  "sketchLocation": "/Users/christophrendel_privat/GitHub/ORS_ESP32/ORS_05"
+}
