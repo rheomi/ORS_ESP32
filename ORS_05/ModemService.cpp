@@ -51,10 +51,15 @@ void ModemService::powerOff() {
 
 bool ModemService::connectGPRS() {
     debugPrintln("Verbinde GPRS...");
-    if (!modem.waitForNetwork()){
+    if (!modem.waitForNetwork(NETWORK_TIMEOUT_MS)){
         #ifdef DEBUG_MODE_AKTIV
             debugBLEln("Network connection failed");
             debugPrintln("Network connection failed");
+            // Diagnose: 99 = kein Empfang (Antenne/Abdeckung), Status 2 = sucht, 3 = abgelehnt
+            String diag = "Signal quality: " + String(modem.getSignalQuality()) +
+                          ", Reg-Status: " + String(modem.getRegistrationStatus());
+            debugBLEln(diag.c_str());
+            debugPrintln(diag.c_str());
         #endif
         return false;
     }

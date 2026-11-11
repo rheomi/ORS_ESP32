@@ -43,6 +43,7 @@
 
 const char GPRS_USER[]      = "";
 const char GPRS_PASS[]      = "";
+const uint32_t NETWORK_TIMEOUT_MS = 180000; // erstes Einbuchen (v.a. NB-IoT/LTE-M) kann länger dauern
 
 extern const char* MQTT_BROKER;
 extern const int   MQTT_PORT;
